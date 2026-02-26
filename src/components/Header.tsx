@@ -7,11 +7,10 @@ import { ThemeToggle } from "./ThemeToggle";
 import { siteConfig } from "@/data/site";
 
 const navLinks = [
-  { label: "About", href: "/#about" },
   { label: "Projects", href: "/projects" },
-  { label: "Skills", href: "/#skills" },
-  { label: "Experience", href: "/#experience" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Experience", href: "/experience" },
+  { label: "Education", href: "/education" },
+  { label: "Skills", href: "/skills" },
 ];
 
 export function Header() {

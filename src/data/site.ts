@@ -25,12 +25,23 @@ export interface Education {
   degree: string;
   school: string;
   period: string;
+  gpa: string;
   details: string[];
+  coursework: string[];
+  certifications: string[];
+  achievements: string[];
+}
+
+export interface Skill {
+  name: string;
+  proficiency: number; // 0-100
+  usedIn: string; // where you used it
 }
 
 export interface SkillGroup {
   category: string;
-  skills: string[];
+  icon: string;
+  skills: Skill[];
 }
 
 export const siteConfig = {
@@ -38,6 +49,13 @@ export const siteConfig = {
   title: "Data Analytics Engineering · AI (RAG) · Data Engineering",
   tagline:
     "Data Analytics Engineering grad building production-grade RAG systems, scalable ETL pipelines, and executive dashboards—backed by evaluation metrics, not guesses.",
+  introRoles: [
+    "Data Analytics Engineer",
+    "RAG System Builder",
+    "ETL Pipeline Architect",
+    "BI Dashboard Designer",
+  ],
+  introHook: "I turn messy data into clear decisions.",
   email: "aravindsaikompalli@gmail.com",
   linkedin: "https://www.linkedin.com/in/aravind51/",
   github: "https://github.com/Aravind5100",
@@ -164,55 +182,64 @@ export const projects: Project[] = [
 export const skillGroups: SkillGroup[] = [
   {
     category: "AI & GenAI",
+    icon: "🧠",
     skills: [
-      "LLMs",
-      "LlamaIndex",
-      "Prompt Engineering",
-      "RAG",
-      "Embeddings",
-      "Vector Search",
-      "Semantic Search",
+      { name: "RAG Systems", proficiency: 90, usedIn: "Single-PDF RAG project" },
+      { name: "LLMs & Prompt Engineering", proficiency: 85, usedIn: "RAG evaluation pipeline" },
+      { name: "Embeddings & Vector Search", proficiency: 88, usedIn: "FAISS + BM25 hybrid retrieval" },
+      { name: "LlamaIndex", proficiency: 75, usedIn: "Document indexing experiments" },
+      { name: "Semantic Search", proficiency: 85, usedIn: "Hybrid retrieval optimization" },
     ],
   },
   {
-    category: "Programming Languages",
-    skills: ["Python", "SQL", "PL/SQL", "R", "Java", "C", "UNIX/Shell Scripting"],
+    category: "Programming",
+    icon: "💻",
+    skills: [
+      { name: "Python", proficiency: 95, usedIn: "All projects — pipelines, RAG, analytics" },
+      { name: "SQL / PL/SQL", proficiency: 92, usedIn: "25M+ record migration at Netcracker" },
+      { name: "R", proficiency: 70, usedIn: "Statistical analysis coursework" },
+      { name: "Java", proficiency: 65, usedIn: "Backend modules at Netcracker" },
+      { name: "Shell Scripting", proficiency: 72, usedIn: "ETL automation scripts" },
+    ],
   },
   {
     category: "Data Analytics & ML",
+    icon: "📊",
     skills: [
-      "Pandas",
-      "NumPy",
-      "PySpark",
-      "Spark MLlib",
-      "Predictive Modeling",
-      "Model Evaluation",
+      { name: "Pandas / NumPy", proficiency: 93, usedIn: "Energy & GHG analysis pipeline" },
+      { name: "PySpark & Spark MLlib", proficiency: 78, usedIn: "Big Data coursework" },
+      { name: "Predictive Modeling", proficiency: 80, usedIn: "ML coursework & projects" },
+      { name: "Model Evaluation", proficiency: 85, usedIn: "Recall@K / MRR in RAG" },
     ],
   },
   {
     category: "Databases & Retrieval",
-    skills: ["Oracle", "PostgreSQL", "pgvector", "FAISS", "NoSQL"],
+    icon: "🗄️",
+    skills: [
+      { name: "Oracle", proficiency: 88, usedIn: "Billing data migration at Netcracker" },
+      { name: "PostgreSQL / pgvector", proficiency: 82, usedIn: "Vector store experiments" },
+      { name: "FAISS", proficiency: 87, usedIn: "Single-PDF RAG vector search" },
+      { name: "NoSQL", proficiency: 70, usedIn: "Data management coursework" },
+    ],
   },
   {
     category: "Cloud & MLOps",
+    icon: "☁️",
     skills: [
-      "AWS (S3, EC2, Glue, Redshift, SageMaker)",
-      "Docker",
-      "CI/CD",
-      "FastAPI",
-      "REST APIs",
+      { name: "AWS (S3, EC2, Glue, Redshift)", proficiency: 78, usedIn: "Cloud Foundations certification" },
+      { name: "Docker", proficiency: 75, usedIn: "Containerized RAG deployment" },
+      { name: "CI/CD", proficiency: 72, usedIn: "Netcracker release pipelines" },
+      { name: "FastAPI / REST APIs", proficiency: 80, usedIn: "Backend API development" },
     ],
   },
   {
     category: "Visualization & Tools",
+    icon: "📈",
     skills: [
-      "Power BI",
-      "Tableau",
-      "DAX",
-      "Excel (Advanced, Pivot)",
-      "Google Analytics",
-      "Git",
-      "Jupyter",
+      { name: "Power BI & DAX", proficiency: 90, usedIn: "GMU Space Utilization dashboards" },
+      { name: "Tableau", proficiency: 75, usedIn: "Data visualization coursework" },
+      { name: "Excel (Advanced)", proficiency: 85, usedIn: "Data analysis & reporting" },
+      { name: "Git", proficiency: 88, usedIn: "All projects — version control" },
     ],
   },
 ];
@@ -246,12 +273,27 @@ export const experience: Experience[] = [
 
 export const education: Education[] = [
   {
-    degree: "M.S. in Data Analytics Engineering (GPA: 3.8)",
+    degree: "M.S. in Data Analytics Engineering",
     school: "George Mason University",
     period: "Aug 2024 – May 2026",
+    gpa: "3.8",
     details: [
-      "Coursework: Machine Learning, Visualizations & Modelling, Data Management & Mining, Big Data",
-      "AWS Academy Certifications: Cloud Foundations, Data Engineering",
+      "Graduate program focused on applied machine learning, big data systems, and analytics engineering",
+    ],
+    coursework: [
+      "Machine Learning",
+      "Data Visualization & Modeling",
+      "Data Management & Mining",
+      "Big Data Analytics",
+      "Statistical Methods",
+    ],
+    certifications: [
+      "AWS Academy Cloud Foundations",
+      "AWS Academy Data Engineering",
+    ],
+    achievements: [
+      "GPA 3.8 / 4.0",
+      "Space Database Management Intern at GMU Facilities",
     ],
   },
 ];

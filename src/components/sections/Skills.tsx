@@ -14,15 +14,15 @@ export function Skills() {
           {skillGroups.map((g) => (
             <div key={g.category}>
               <h3 className="text-sm font-semibold text-neutral-900 dark:text-white">
-                {g.category}
+                {g.icon} {g.category}
               </h3>
               <div className="mt-3 flex flex-wrap gap-2">
                 {g.skills.map((s) => (
                   <span
-                    key={s}
+                    key={s.name}
                     className="rounded-full border border-neutral-200 bg-white px-3 py-1 text-xs font-medium text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
                   >
-                    {s}
+                    {s.name}
                   </span>
                 ))}
               </div>
