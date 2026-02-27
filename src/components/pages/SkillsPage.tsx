@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { skillGroups, type SkillGroup } from "@/data/site";
 import { ContactBar } from "@/components/ContactBar";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { SkillIcon, CategoryIcon } from "@/components/SkillIcon";
 
 function SkillBar({ name, proficiency, usedIn, delay }: { name: string; proficiency: number; usedIn: string; delay: number }) {
   const [hovered, setHovered] = useState(false);
@@ -16,7 +17,8 @@ function SkillBar({ name, proficiency, usedIn, delay }: { name: string; proficie
       onMouseLeave={() => setHovered(false)}
     >
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+        <span className="flex items-center gap-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">
+          <SkillIcon name={name} className="h-4 w-4 flex-shrink-0 text-neutral-500 dark:text-neutral-400" />
           {name}
         </span>
         <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
@@ -58,7 +60,9 @@ function CategoryCard({ group, index }: { group: SkillGroup; index: number }) {
       className="rounded-2xl border border-neutral-200 bg-white p-6 transition-all hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-900"
     >
       <div className="flex items-center gap-3">
-        <span className="text-2xl">{group.icon}</span>
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+          <CategoryIcon category={group.category} className="h-5 w-5" />
+        </div>
         <h3 className="text-lg font-bold text-neutral-900 dark:text-white">
           {group.category}
         </h3>
