@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, Linkedin, Github, Download } from "lucide-react";
+import { Mail, Linkedin, Github } from "lucide-react";
 import { motion } from "framer-motion";
 import { siteConfig } from "@/data/site";
 
@@ -42,13 +42,6 @@ export function ContactBar() {
             className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-700 shadow-sm transition-all hover:border-blue-300 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:border-blue-600"
           >
             <Github className="h-4 w-4" /> GitHub
-          </a>
-          <a
-            href={siteConfig.resumeUrl}
-            download
-            className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-700 hover:shadow-md dark:bg-blue-500 dark:hover:bg-blue-400"
-          >
-            <Download className="h-4 w-4" /> Resume
           </a>
         </div>
       </div>

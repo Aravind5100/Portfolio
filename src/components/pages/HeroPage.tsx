@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Download, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { siteConfig, about } from "@/data/site";
 import { ContactBar } from "@/components/ContactBar";
 
@@ -134,7 +134,7 @@ export function HeroPage() {
             {siteConfig.introHook}{" "}
             <span className="text-neutral-500 dark:text-neutral-500">
               From migrating 25M+ billing records to building evaluated RAG systems
-              with measurable retrieval quality — I build things that hold up in production.
+              with measurable retrieval quality, I build things that hold up in production.
             </span>
           </motion.p>
 
@@ -151,13 +151,6 @@ export function HeroPage() {
             >
               View My Work <ArrowRight className="h-4 w-4" />
             </Link>
-            <a
-              href={siteConfig.resumeUrl}
-              download
-              className="inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-white px-6 py-3 text-sm font-semibold text-neutral-700 shadow-sm transition-all hover:border-neutral-400 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:border-neutral-600"
-            >
-              <Download className="h-4 w-4" /> Resume
-            </a>
           </motion.div>
 
           {/* Stats strip */}

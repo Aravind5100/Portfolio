@@ -59,7 +59,7 @@ export const siteConfig = {
   email: "aravindsaikompalli@gmail.com",
   linkedin: "https://www.linkedin.com/in/aravind51/",
   github: "https://github.com/Aravind5100",
-  resumeUrl: "/resume.pdf",
+
   ogImage: "/og-image.png",
   siteUrl: "https://aravindkompalli.dev",
 };
@@ -286,6 +286,7 @@ export const education: Education[] = [
       "Data Management & Mining",
       "Big Data Analytics",
       "Statistical Methods",
+      "Marketing Research",
     ],
     certifications: [
       "AWS Academy Cloud Foundations",
@@ -293,7 +294,7 @@ export const education: Education[] = [
     ],
     achievements: [
       "GPA 3.8 / 4.0",
-      "Space Database Management Intern at GMU Facilities",
+      "Space Management Database Intern at GMU Facilities",
     ],
   },
 ];
