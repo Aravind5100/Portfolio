@@ -23,8 +23,7 @@ export function Header() {
           href="/"
           className="text-lg font-semibold tracking-tight text-neutral-900 dark:text-white"
         >
-          {siteConfig.name.split(" ")[0]}
-          <span className="text-blue-600 dark:text-blue-400">.</span>
+          {siteConfig.name}
         </Link>
 
         {/* Desktop nav */}
