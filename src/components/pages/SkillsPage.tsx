@@ -4,15 +4,15 @@ import { ContactBar } from "@/components/ContactBar";
 export function SkillsPage() {
   return (
     <>
-      <div className="mx-auto max-w-5xl px-5 pt-20 pb-16 sm:px-8">
+      <div className="mx-auto max-w-6xl px-5 pt-20 pb-16 sm:px-8">
         <h1 className="text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
           Skills
         </h1>
         <p className="mt-3 max-w-xl text-lg text-muted">
-          Technologies I use, and the project or role where I applied each one.
+          Technologies I use, and the specific project or role where I applied each one.
         </p>
 
-        <div className="mt-12 grid gap-10 border-t border-border pt-10 sm:grid-cols-2">
+        <div className="mt-12 grid gap-10 border-t border-border pt-10 sm:grid-cols-2 lg:grid-cols-3">
           {skillGroups.map((group) => (
             <div key={group.category}>
               <h2 className="text-sm font-medium uppercase tracking-wide text-faint">
