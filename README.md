@@ -43,10 +43,6 @@ Add an entry to the `projects` array in `src/data/site.ts`:
 }
 ```
 
-### Resume
-
-Replace `public/resume.pdf` with your actual resume file. The download button links to `/resume.pdf`.
-
 ## Project Structure
 
 ```
@@ -78,13 +74,13 @@ src/
 
 ## Features
 
-- **Light / Dark mode** — system-aware, with manual toggle
-- **Responsive** — mobile-first layout
-- **Accessible** — semantic HTML, aria labels, keyboard nav
-- **SEO ready** — Open Graph, Twitter cards, robots meta
-- **Project filters** — filter by RAG, BI, Data Engineering, Cloud
-- **Case study pages** — `/projects/[slug]` with Problem → Approach → Results format
-- **Metrics bar** — highlights key numbers on project cards and case studies
+- Light / dark mode, system-aware, with a manual toggle
+- Responsive, mobile-first layout
+- Semantic HTML, visible keyboard focus states, aria labels
+- SEO-ready: Open Graph, Twitter cards, robots meta
+- Project filters: All, RAG, BI, Data Engineering, Full-Stack
+- Case study pages at `/projects/[slug]` (Problem, Approach, Results)
+- Draft Terms of Use and Privacy Policy pages at `/terms` and `/privacy`
 
 ## Deploy
 
@@ -111,6 +107,7 @@ Then `npm run build` and deploy the `out/` directory.
 
 - Next.js 16 (App Router)
 - TypeScript
-- Tailwind CSS v4
-- Lucide React (icons)
+- Tailwind CSS v4, with design tokens defined in `src/app/globals.css`
+- System font stack (no webfonts loaded)
+- Hand-drawn SVG icons in `src/components/icons.tsx` (no icon library)
 - next-themes (dark mode)

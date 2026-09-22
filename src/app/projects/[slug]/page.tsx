@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { projects } from "@/data/site";
 import { MetricsBar } from "@/components/MetricsBar";
+import { ArrowIcon, BackIcon } from "@/components/icons";
+import { ContactBar } from "@/components/ContactBar";
 import type { Metadata } from "next";
 
 interface Props {
@@ -29,111 +30,84 @@ export default async function CaseStudyPage({ params }: Props) {
   if (!project) notFound();
 
   return (
-    <article className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
-      {/* Back link */}
-      <Link
-        href="/projects"
-        className="mb-8 inline-flex items-center gap-1 text-sm font-medium text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-      >
-        <ArrowLeft className="h-4 w-4" /> All Projects
-      </Link>
+    <>
+      <article className="mx-auto max-w-3xl px-5 pt-16 pb-20 sm:px-8">
+        <Link
+          href="/projects"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted hover:text-ink"
+        >
+          <BackIcon className="h-3.5 w-3.5" /> All projects
+        </Link>
 
-      {/* Header */}
-      <div className="flex flex-wrap items-center gap-2">
-        {project.tags.map((t) => (
-          <span
-            key={t}
-            className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-          >
-            {t}
-          </span>
-        ))}
-      </div>
-      <h1 className="mt-4 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl dark:text-white">
-        {project.title}
-      </h1>
-      <p className="mt-2 text-lg text-neutral-500 dark:text-neutral-400">{project.subtitle}</p>
-
-      {/* Metrics */}
-      <div className="mt-8">
-        <MetricsBar metrics={project.metrics} />
-      </div>
-
-      {/* Problem */}
-      <section className="mt-12">
-        <h2 className="text-sm font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400">
-          Problem
-        </h2>
-        <p className="mt-3 leading-relaxed text-neutral-700 dark:text-neutral-300">
-          {project.problem}
-        </p>
-      </section>
-
-      {/* Approach */}
-      <section className="mt-10">
-        <h2 className="text-sm font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400">
-          Approach
-        </h2>
-        <p className="mt-3 leading-relaxed text-neutral-700 dark:text-neutral-300">
-          {project.approach}
-        </p>
-      </section>
-
-      {/* Results / Impact */}
-      <section className="mt-10">
-        <h2 className="text-sm font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400">
-          Results &amp; Impact
-        </h2>
-        <ul className="mt-3 space-y-2">
-          {project.results.map((r) => (
-            <li
-              key={r}
-              className="text-neutral-700 before:mr-2 before:content-['•'] dark:text-neutral-300"
-            >
-              {r}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* Tech Stack */}
-      <section className="mt-10">
-        <h2 className="text-sm font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400">
-          Tech Stack
-        </h2>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {project.techStack.map((t) => (
-            <span
-              key={t}
-              className="rounded-full border border-neutral-200 bg-white px-3 py-1 text-sm font-medium text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
-            >
+        <div className="mt-8 flex flex-wrap gap-2">
+          {project.tags.map((t) => (
+            <span key={t} className="text-xs font-medium uppercase tracking-wide text-accent">
               {t}
             </span>
           ))}
         </div>
-      </section>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+          {project.title}
+        </h1>
+        <p className="mt-2 text-lg text-muted">{project.subtitle}</p>
 
-      {/* Links */}
-      {project.links.length > 0 && (
+        <div className="mt-8">
+          <MetricsBar metrics={project.metrics} />
+        </div>
+
         <section className="mt-10">
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400">
-            Links
+          <h2 className="text-sm font-medium uppercase tracking-wide text-faint">Problem</h2>
+          <p className="mt-3 text-[17px] leading-relaxed text-ink">{project.problem}</p>
+        </section>
+
+        <section className="mt-10">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-faint">Approach</h2>
+          <p className="mt-3 text-[17px] leading-relaxed text-ink">{project.approach}</p>
+        </section>
+
+        <section className="mt-10">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-faint">
+            Results &amp; impact
           </h2>
-          <div className="mt-3 flex flex-wrap gap-3">
-            {project.links.map((l) => (
-              <a
-                key={l.url}
-                href={l.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 shadow-sm transition-colors hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
-              >
-                {l.label} <ArrowUpRight className="h-3.5 w-3.5" />
-              </a>
+          <ul className="mt-3 space-y-3">
+            {project.results.map((r) => (
+              <li key={r} className="flex gap-3 text-[17px] leading-relaxed text-ink">
+                <span className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
+                {r}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="mt-10">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-faint">Tech stack</h2>
+          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-[15px] text-muted">
+            {project.techStack.map((t) => (
+              <span key={t}>{t}</span>
             ))}
           </div>
         </section>
-      )}
-    </article>
+
+        {project.links.length > 0 && (
+          <section className="mt-10">
+            <h2 className="text-sm font-medium uppercase tracking-wide text-faint">Links</h2>
+            <div className="mt-3 flex flex-wrap gap-5">
+              {project.links.map((l) => (
+                <a
+                  key={l.url}
+                  href={l.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-ink hover:text-accent"
+                >
+                  {l.label} <ArrowIcon className="h-3.5 w-3.5" />
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+      </article>
+      <ContactBar />
+    </>
   );
 }

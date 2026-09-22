@@ -2,20 +2,71 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+:root {
+  --bg: #f6f4ef;
+  --surface: #fffefb;
+  --ink: #1c1a16;
+  --muted: #6c665c;
+  --faint: #9a9388;
+  --border: #e2ddd0;
+  --accent: #a04e2a;
+  --accent-ink: #fffdfa;
+  --radius: 4px;
+}
+
+:root.dark {
+  --bg: #17140f;
+  --surface: #1e1a14;
+  --ink: #f1ece2;
+  --muted: #a89f90;
+  --faint: #756d61;
+  --border: #332c22;
+  --accent: #dd8a55;
+  --accent-ink: #1a1209;
+}
+
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+
+  --radius-card: var(--radius);
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 body {
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
-  @apply bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100;
+  background-color: var(--bg);
+  color: var(--ink);
 }
 
 ::selection {
-  @apply bg-blue-600/20;
+  background-color: color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }

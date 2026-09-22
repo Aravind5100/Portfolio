@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { MenuIcon, CloseIcon } from "./icons";
 import { ThemeToggle } from "./ThemeToggle";
 import { siteConfig } from "@/data/site";
 
@@ -17,53 +17,49 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-neutral-200/60 bg-white/80 backdrop-blur-lg dark:border-neutral-800/60 dark:bg-neutral-950/80">
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link
-          href="/"
-          className="text-lg font-semibold tracking-tight text-neutral-900 dark:text-white"
-        >
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-bg/95">
+      <nav className="mx-auto flex h-16 max-w-5xl items-center justify-between px-5 sm:px-8">
+        <Link href="/" className="text-[15px] font-semibold tracking-tight text-ink">
           {siteConfig.name}
         </Link>
 
-        {/* Desktop nav */}
         <div className="hidden items-center gap-1 md:flex">
           {navLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className="rounded-md px-3 py-2 text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+              className="rounded-[var(--radius)] px-3 py-2 text-sm text-muted transition-colors hover:text-ink"
             >
               {l.label}
             </Link>
           ))}
-          <div className="ml-2">
+          <div className="ml-3">
             <ThemeToggle />
           </div>
         </div>
 
-        {/* Mobile toggle */}
         <div className="flex items-center gap-2 md:hidden">
           <ThemeToggle />
           <button
-            aria-label="Toggle menu"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-200 text-neutral-700 dark:border-neutral-700 dark:text-neutral-200"
+            type="button"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((v) => !v)}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius)] border border-border text-ink"
           >
-            {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            {mobileOpen ? <CloseIcon /> : <MenuIcon />}
           </button>
         </div>
       </nav>
 
-      {/* Mobile menu */}
       {mobileOpen && (
-        <div className="border-t border-neutral-200 bg-white px-4 pb-4 dark:border-neutral-800 dark:bg-neutral-950 md:hidden">
+        <div className="border-t border-border px-5 pb-4 md:hidden">
           {navLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               onClick={() => setMobileOpen(false)}
-              className="block rounded-md px-3 py-2 text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+              className="block rounded-[var(--radius)] px-1 py-2.5 text-[15px] text-ink"
             >
               {l.label}
             </Link>
