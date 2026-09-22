@@ -7,6 +7,7 @@ export interface Project {
   problem: string;
   approach: string;
   results: string[];
+  keyDecisions?: { decision: string; why: string }[];
   techStack: string[];
   metrics: { label: string; value: string }[];
   links: { label: string; url: string }[];
@@ -76,20 +77,39 @@ export const about = {
 
 export const projects: Project[] = [
   {
-    slug: "single-pdf-rag",
-    title: "Single-PDF RAG System (Evaluated & Persistent)",
+    slug: "rag-document-chatbot",
+    title: "RAG Document Chatbot",
     subtitle: "RAG · Retrieval Evaluation · Streamlit",
     tags: ["RAG", "Data Engineering"],
     featured: true,
     problem:
       "Most RAG demos skip evaluation, rebuild embeddings on every run, rely on opaque APIs, and cannot explain retrieval failures, which makes them unsuitable for production use on document-heavy workflows.",
     approach:
-      "Built a production-style RAG application for question answering over a single PDF using page-aware chunking with overlap, local vector embeddings via Ollama (nomic-embed-text), and FAISS-based similarity search combined with BM25 keyword fallback for hybrid retrieval. Implemented persistent caching of embeddings and FAISS indexes keyed by content hash, chunking parameters, and model name to eliminate redundant computation. Developed a Streamlit UI with chat history, citation-grounded responses, and expandable context inspection. Built a formal retrieval evaluation pipeline using Recall@K and MRR on a hand-curated golden dataset to objectively measure and tune search quality.",
+      "Built a production-style RAG application for question answering over a single PDF using page-aware, page-scoped chunking (900 characters, 350-character overlap) with local vector embeddings via Ollama (nomic-embed-text), and FAISS-based similarity search combined with BM25 keyword fallback for hybrid retrieval. Retrieval splits top_k between keyword and vector search, merges keyword hits first, and fills remaining slots with vector hits, so precise lexical matches (exact numbers, named policies) are never crowded out by semantically-similar-but-wrong chunks. Implemented persistent, content-addressed caching of embeddings and FAISS indexes keyed by SHA-256 of the PDF hash, chunking parameters, and model name to eliminate redundant computation. Built a Streamlit UI with chat history, citation-grounded responses, and expandable context inspection, plus a formal retrieval evaluation pipeline using Recall@K and MRR on a hand-curated, 10-question golden dataset spanning policy, fact, list, procedure, and unanswerable question types.",
     results: [
-      "Perfect Recall@K = 1.0 on a 10-question hand-labeled golden set: every scored question retrieved a chunk from its correct ground-truth page",
-      "MRR = 0.806 across policy, fact, list, and procedure question types, evaluated against a real university housing handbook",
-      "Persistent, content-addressed caching (SHA-256 of PDF + chunking params + embed model) eliminated redundant embedding computation on repeat runs",
-      "Hallucination-safe generation: context-grounded answers only, with inline page and chunk citations, and a verified refusal path for unanswerable questions",
+      "Perfect Recall@K = 1.0 on the golden set: every scored question retrieved a chunk from its correct ground-truth page, across policy, fact, list, and procedure question types",
+      "MRR = 0.806, evaluated against a real 200+ page university housing handbook, with the correct page usually ranked at or near the top",
+      "Persistent, content-addressed caching eliminated redundant embedding computation on repeat runs and on switching between PDFs",
+      "Hallucination-safe generation: context-grounded answers only, with inline page and chunk citations, and a verified refusal path for the one deliberately unanswerable question in the eval set",
+      "Generalized across document genre: the same pipeline was exercised against both a structured policy handbook and a narrative novel without changing the retrieval or generation code",
+    ],
+    keyDecisions: [
+      {
+        decision: "Hybrid retrieval (keyword + vector), keyword hits merged first",
+        why: "Vector-only search was measurably missing exact-match queries, specific numbers, named policies, proper nouns, that a simple term-frequency search catches trivially. Merging keyword-first was a direct, empirical fix for retrieval failures a pure-vector approach was producing.",
+      },
+      {
+        decision: "Exact FAISS search (IndexFlatL2), not an approximate index",
+        why: "At single-document, few-hundred-chunk scale, exact search is fast enough and avoids a whole class of ANN tuning problems (nlist, nprobe). The system is deliberately single-PDF scoped, not built for corpora.",
+      },
+      {
+        decision: "Content-addressed cache keyed on SHA-256(PDF hash + chunk size + overlap + embed model)",
+        why: "Correctness is guaranteed by construction: any change to the PDF or any pipeline parameter automatically invalidates the cache and forces a rebuild, with no manual cache-busting step to forget.",
+      },
+      {
+        decision: "Local-only inference via Ollama, no hosted LLM or embedding API",
+        why: "No per-call cost, no dependency on hosted model behavior changing over time, and every stage of the pipeline stays inspectable end to end, which is what makes the evaluation harness meaningful.",
+      },
     ],
     techStack: [
       "Python",
@@ -152,12 +172,22 @@ export const projects: Project[] = [
     problem:
       "George Mason University facilities management lacked a unified view of building occupancy and space utilization, making it difficult to optimize room allocation and support planning decisions across buildings and divisions.",
     approach:
-      "Built Power BI dashboards for occupancy and space utilization analysis across university buildings and divisions using DAX measures, relational data modeling, and interactive visualizations. Developed automated data validation pipelines in Python to streamline data transfers between Archibus and AutoCAD floor plan workflows, reducing operational turnaround time.",
+      "Built Power BI dashboards for occupancy and space utilization analysis across 287 buildings and 4 campuses (Fairfax, Arlington/Mason Square, SciTech/Manassas, Mason Korea) using DAX measures, relational data modeling, and interactive visualizations. Developed automated Python data validation pipelines to keep the Archibus database and AutoCAD floor plans in sync, replacing what had been a fully manual reconciliation process at that scale.",
     results: [
       "Reduced operational turnaround time by 30% through automated Python validation pipelines",
-      "Delivered interactive dashboards with DAX measures and slicers for facilities planning decisions",
-      "Streamlined data transfers between Archibus and AutoCAD floor plan workflows",
-      "Enabled data-driven space allocation decisions across university buildings and divisions",
+      "Delivered interactive dashboards (KPIs, DAX measures, Power Query, slicers) tracking vacancy/occupancy rates, area-per-occupancy trends, occupancy density, and monthly maintenance costs, refreshed automatically each day",
+      "Streamlined data transfers between Archibus and AutoCAD floor plan workflows across 4 campuses",
+      "Dashboards are used regularly by university officials and stakeholders to make space allocation decisions",
+    ],
+    keyDecisions: [
+      {
+        decision: "Redesigned the Archibus primary key to Building ID + Room ID",
+        why: "The sync broke once: rooms sharing the same room ID across different buildings were being treated as duplicates. Composite-keying on Building ID + Room ID fixed it, and my supervisor still uses that key structure today to flag incorrectly entered records.",
+      },
+      {
+        decision: "Backup-before-overwrite safeguard (timestamped file, kept separate from the live diagram) on every automated update",
+        why: "Added directly in response to the duplicate-key incident, so a rollback path always exists if a sync update goes wrong, on top of Archibus's own week of retained backups.",
+      },
     ],
     techStack: [
       "Power BI",
@@ -190,6 +220,24 @@ export const projects: Project[] = [
       "A controlled 25-scenario A/B test showed enabling web retrieval raised evidence-first routing from 56% to 88%, adding 8 legally-grounded findings vs. 0, for only +3.7s of added latency",
       "Backed by a curated corpus of 955+ sources and 150K+ chunks across 10 Arctic nations plus Arctic Council/NATO/EU sources",
       "1,505 backend + 84 frontend automated tests; full-stack Dockerized deployment (FastAPI + Next.js + Nginx) with Prometheus/Grafana observability and Langfuse LLM tracing",
+    ],
+    keyDecisions: [
+      {
+        decision: "Disabled LLM-generated HyDE in favor of deterministic, rule-based query rewriting",
+        why: "A controlled A/B test showed the LLM version cost 6 points of nDCG. The LLM's only remaining role in retrieval is query-type classification; everything else is rule-based because it measurably retrieves better.",
+      },
+      {
+        decision: "Multiplicative authority scoring with a hard floor, not additive credits",
+        why: "Additive tier credits let a low-quality chunk 'rescue' itself into the top results by accumulating small boosts. Multiplicative scoring with a floor at median(top5) x 0.45 closes that hole while still rewarding tier-1 sources.",
+      },
+      {
+        decision: "Generate, verify, escalate across three different models instead of one model checking its own work",
+        why: "A model verifying its own output tends to correlate its own errors. A different model with different prompting catches more, and escalation to a stronger model only fires when verification actually fails.",
+      },
+      {
+        decision: "Two-phase scenario flow (parse, then confirm) instead of one-shot analysis",
+        why: "A full scenario run costs 20+ LLM calls and 60-120 seconds. Letting an analyst review and correct the system's interpretation of countries and actions before committing to the full run avoids paying that cost on a misread prompt.",
+      },
     ],
     techStack: [
       "Python",
@@ -226,6 +274,24 @@ export const projects: Project[] = [
       "Identified 4 emerging skills (Tableau, Power BI, Excel, R) vs. 6 stable core skills (SQL, Python, AWS, Spark, Azure, Java) from 53 weeks of demand data",
       "Flagged 38,305 anomalous postings (4.9% of the dataset) by combining rule-based thresholds with an Isolation Forest model",
     ],
+    keyDecisions: [
+      {
+        decision: "Medallion architecture (Bronze, Silver, Gold, ML, Serving) over a flatter pipeline",
+        why: "Instantly legible to data-engineering interviewers and maps directly onto how the platform explains itself; each layer is independently re-runnable and testable.",
+      },
+      {
+        decision: "Text-only Linear SVM chosen as the production classifier over text+metadata models",
+        why: "Benchmarking showed metadata (salary, location, benefits) added minimal accuracy lift over title/skills/location text alone, a data-driven simplification rather than picking the most complex model.",
+      },
+      {
+        decision: "Anomaly detection combines rule-based flags with an Isolation Forest rather than either alone",
+        why: "Rule-based thresholds alone are transparent but crude, flagging 54.3% of postings on skill-count deviation by itself. Fusing them with a model-based score keeps the result interpretable without being too blunt to act on.",
+      },
+      {
+        decision: "Composite recommendation score weighted 0.5 role importance / 0.3 market demand / 0.2 emerging signal",
+        why: "An explicit business judgment to prioritize skills a target role actually needs over skills that are merely broadly popular or merely trending.",
+      },
+    ],
     techStack: [
       "Python",
       "Pandas",
@@ -258,6 +324,24 @@ export const projects: Project[] = [
       "Fixed bcrypt's silent 72-byte password truncation by validating byte length (not character length) before hashing, preventing a false sense of password strength",
       "Blocked username homoglyph impersonation (e.g. Cyrillic look-alike characters) with an explicit character-set validator",
       "404-not-403 and identical-message login errors prevent both task-ID and username enumeration by any authenticated caller",
+    ],
+    keyDecisions: [
+      {
+        decision: "Ownership enforced as a query filter, not a follow-up check",
+        why: "The dependency that resolves a task ID also filters by owner_id in the same query, returning 404 on no match. No future route can accidentally fetch another user's row, because the SQL itself can't return it.",
+      },
+      {
+        decision: "404, not 403, for a task you don't own",
+        why: "A 403 would confirm the ID exists at all, letting any authenticated caller enumerate how many tasks exist system-wide just by probing IDs. The same reasoning applies to login: an unknown username and a wrong password return an identical 401.",
+      },
+      {
+        decision: "Two separate model layers: SQLAlchemy models for the database, Pydantic schemas for the API",
+        why: "If merged, returning an ORM object directly would serialize whatever attributes happen to be loaded. An unrelated change, like eager-loading a relationship, could silently start leaking a related user's hashed_password into a response.",
+      },
+      {
+        decision: "Fail loudly on missing config (no default secret key)",
+        why: "A fallback default like 'dev-secret' is exactly the mechanism by which a development secret quietly ends up signing tokens in production, so config.py raises at import time instead of defaulting.",
+      },
     ],
     techStack: [
       "Python",
@@ -292,6 +376,16 @@ export const projects: Project[] = [
       "Replaced a single hardcoded CORS origin with a regex-based localhost policy, confirmed fixed using the same curl-based method that found the bug",
       "Collision-checked shortcode generation over a 62^6 (~56.8B) possible-value space",
     ],
+    keyDecisions: [
+      {
+        decision: "allow_origin_regex matching any localhost port, instead of one fixed CORS origin",
+        why: "Vite silently falls back to the next free port whenever the default is already taken, which is exactly what caused the live CORS failure this project debugged. A regex policy tolerates that without hardcoding a second origin every time it happens.",
+      },
+      {
+        decision: "Diagnosed the failure with lsof and a hand-crafted curl preflight request, not trial-and-error through the UI",
+        why: "'Load failed' in the browser is a generic message that looks identical for a dead server and a CORS rejection. Checking what was actually listening, then reproducing the exact preflight the browser sends, isolated the real mechanism instead of guessing and re-testing through a slower feedback loop.",
+      },
+    ],
     techStack: ["Python", "FastAPI", "PostgreSQL", "SQLAlchemy", "React", "Vite"],
     metrics: [
       { label: "Routes", value: "3 REST endpoints" },
@@ -307,7 +401,7 @@ export const skillGroups: SkillGroup[] = [
   {
     category: "AI & GenAI",
     skills: [
-      { name: "RAG Systems", usedIn: "Single-PDF RAG project" },
+      { name: "RAG Systems", usedIn: "RAG Document Chatbot" },
       { name: "LLMs & Prompt Engineering", usedIn: "RAG evaluation pipeline" },
       { name: "Embeddings & Vector Search", usedIn: "FAISS + BM25 hybrid retrieval" },
       { name: "LlamaIndex", usedIn: "Document indexing experiments" },
@@ -339,7 +433,7 @@ export const skillGroups: SkillGroup[] = [
     skills: [
       { name: "Oracle", usedIn: "Billing data migration at Netcracker" },
       { name: "PostgreSQL / pgvector", usedIn: "Vector store experiments" },
-      { name: "FAISS", usedIn: "Single-PDF RAG vector search" },
+      { name: "FAISS", usedIn: "RAG Document Chatbot vector search" },
       { name: "NoSQL", usedIn: "Data management coursework" },
     ],
   },
@@ -369,10 +463,12 @@ export const experience: Experience[] = [
     company: "George Mason University",
     period: "Sep 2026 - Present",
     description:
-      "Leading the database-migration piece of Facilities' transition from Archibus to ArcGIS, and building internal tools for space management operations.",
+      "Leading the database-migration piece of Facilities' transition from Archibus to ArcGIS, and building the internal tools that make that migration and day-to-day space management operations possible.",
     highlights: [
-      "Built a Python tool (ezdxf, Pyautocad) to automatically tag AutoCAD blueprints with the Building/Floor/Room identifiers ArcGIS requires across 287 buildings, with versioned, non-destructive saves and a composite-key safeguard against tag conflicts",
-      "Built CSP Request, a full-stack (React + FastAPI) approval-workflow app replacing manual liaison request forms, now in pilot with 20+ liaisons and cutting liaison-to-Space-Management communication and meeting time by 90%",
+      "Stepped into an in-progress Archibus-to-ArcGIS migration (targeted for January 2027) and took ownership of the database-migration piece, given prior large-scale migration experience at Netcracker",
+      "Built a Python tool (ezdxf, Pyautocad) to automatically tag AutoCAD blueprints with the Building ID, Floor Code, and Room ID that ArcGIS requires (previously only Room ID and Area Capacity were tracked), across 287 buildings, with timestamped non-destructive saves and a composite-key safeguard against tag conflicts",
+      "Built CSP Request, a full-stack (React + FastAPI) approval-workflow app replacing manual liaison paperwork: liaisons submit space requirements through an interactive UI, requests move through a 3-stage approval chain (my feasibility review, supervisor review, final approval), status is tracked in real time, and a rejected request can be resubmitted directly to the stage that flagged it instead of restarting",
+      "CSP Request is in pilot with 20+ liaisons and has cut liaison-to-Space-Management communication and meeting time by 90%",
       "Continue building Power BI dashboards for space utilization and facilities reporting",
     ],
   },
@@ -383,9 +479,11 @@ export const experience: Experience[] = [
     description:
       "Kept the Archibus space-management database and AutoCAD floor plans in sync across 287 buildings and 4 campuses, and built Power BI dashboards for facilities leadership.",
     highlights: [
-      "Automated the two-way Archibus ↔ AutoCAD sync with Python pipelines, saving roughly 10 hours/week across 287 buildings and 4 campuses",
-      "Diagnosed and fixed a duplicate-room-ID sync failure by redesigning the primary key to Building ID + Room ID, plus added automatic backup-before-overwrite safeguards",
-      "Built Power BI dashboards (KPIs, DAX, Power Query) tracking vacancy/occupancy rates and maintenance costs, used regularly by university officials",
+      "Kept the Archibus database current for 287 buildings across 4 campuses (Fairfax, Arlington/Mason Square, SciTech/Manassas, Mason Korea), each with 5-6 floors and 10-20 rooms per floor",
+      "Automated the two-way Archibus <-> AutoCAD sync with Python pipelines, saving roughly 10 hours/week that had previously gone into manually keeping both systems aligned at that scale",
+      "Diagnosed a duplicate-room-ID sync failure (the same room ID reused across different buildings) and redesigned the primary key to Building ID + Room ID; my supervisor still uses that key structure to flag incorrectly entered records, and I added automatic backup-before-overwrite safeguards in response",
+      "Handled work orders for space allocation, coordinating directly with department liaisons on requirements and time-period agreements, and preparing reports for supervisors and higher officials to review and approve",
+      "Built Power BI dashboards (KPIs, DAX, Power Query) tracking vacancy/occupancy rates, area-per-occupancy trends, and monthly maintenance costs, refreshed automatically each day and used regularly by university officials",
     ],
   },
   {
@@ -393,12 +491,14 @@ export const experience: Experience[] = [
     company: "Netcracker Technology Solutions",
     period: "Mar 2022 - Jul 2024",
     description:
-      "Wrote PL/SQL and PostgreSQL migration and validation scripts for telecom billing data migrations on the O2UK client project (NEC Corporation).",
+      "Wrote PL/SQL and PostgreSQL migration and validation scripts for telecom billing data migrations, moving from the ZAIN MySQL-to-PostgreSQL transition onto the O2UK client project for NEC Corporation.",
     highlights: [
-      "Built 108 validation scripts to migrate 11M customer billing records across 28 migration runs, cleaning and validating data inherited from a prior vendor before it could be used for billing",
-      "Reduced migration downtime from 16 hours to 5 hours and cut QA cycle time from 60 hours to 25 hours per cycle by improving validation and analysis workflows",
-      "Independently handled development and migration for O2UK Wholesale, a smaller offline sub-client migration, completed in ~2 months with careful table-lock monitoring",
-      "Built backend APIs (FastAPI) and contributed React/Node.js frontend work for the Alaska client's billing and customer portal",
+      "Started on the ZAIN client's MySQL-to-PostgreSQL migration; moved to the O2UK client within two months based on performance and adaptability",
+      "Built 108 validation scripts to clean and migrate billing data O2UK inherited from a prior vendor; the first migration batch alone (300K customer records) surfaced roughly 93K validation failures, which were analyzed, categorized, and sent back to O2UK for correction before re-migration",
+      "Migrated 11M customers across 28 migration runs total; as the project passed 70% completion, moved from development into production, focused on migration speed and efficiency",
+      "Reduced migration downtime from 16 hours to 5 hours and cut QA cycle time from 60 hours to 25 hours per cycle",
+      "Independently handled development and migration for O2UK Wholesale, a smaller offline sub-client migration requiring careful table-lock monitoring since billing systems had to stay down; completed in about 2 months",
+      "Built backend APIs (FastAPI) and contributed React/Node.js frontend work for the Alaska client's billing and customer portal, with QA testing both layers",
     ],
   },
 ];

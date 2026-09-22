@@ -79,6 +79,22 @@ export default async function CaseStudyPage({ params }: Props) {
           </ul>
         </section>
 
+        {project.keyDecisions && project.keyDecisions.length > 0 && (
+          <section className="mt-10">
+            <h2 className="text-sm font-medium uppercase tracking-wide text-faint">
+              Key decisions
+            </h2>
+            <dl className="mt-4 space-y-6">
+              {project.keyDecisions.map((kd) => (
+                <div key={kd.decision} className="border-l-2 border-accent pl-4">
+                  <dt className="text-[15px] font-medium text-ink">{kd.decision}</dt>
+                  <dd className="mt-1.5 text-[15px] leading-relaxed text-muted">{kd.why}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+
         <section className="mt-10">
           <h2 className="text-sm font-medium uppercase tracking-wide text-faint">Tech stack</h2>
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-[15px] text-muted">

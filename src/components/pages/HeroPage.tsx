@@ -6,7 +6,7 @@ import { ArrowIcon } from "@/components/icons";
 const spotlightSlugs = [
   "arctic-policy-intelligence-engine",
   "career-intelligence-data-platform",
-  "single-pdf-rag",
+  "rag-document-chatbot",
 ];
 
 const spotlight = spotlightSlugs
